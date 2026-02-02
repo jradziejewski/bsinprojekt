@@ -109,6 +109,23 @@ npm start
 - Press `w` to open in **web browser**
 - or scan QR code with Expo Go app on your phone
 
+## ✅ How to Run Everything in One Go
+
+From project root:
+```bash
+# Start backend
+cd backend
+node index.js
+# Open a new terminal for frontend
+cd ../mobile
+npm start
+# press "w" to open app in browser
+```
+
+Backend runs on `http://localhost:3000`
+
+Frontend runs in browser or Expo Go.
+
 ##  API Endpoints
 
 Auth
