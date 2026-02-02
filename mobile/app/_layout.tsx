@@ -25,6 +25,7 @@ export default function RootLayout() {
                 <Stack.Screen name="login" options={{ title: "Login" }} />
                 <Stack.Screen name="register" options={{ title: "Register" }} />
                 <Stack.Screen name="me" options={{ title: "Profile" }} />
+                <Stack.Screen name="products" options={{ title: "Products" }} />
             </Stack>
 
             {/* Redirect based on auth */}
