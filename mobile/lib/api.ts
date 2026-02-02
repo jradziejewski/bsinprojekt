@@ -14,8 +14,20 @@ export async function apiFetch(
         ...options.headers,
     }
 
-    return fetch(`${BASE_URL}${path}`, {
+    const res = await fetch(`${BASE_URL}${path}`, {
         ...options,
         headers,
-    });
+    })
+
+    let data = null;
+
+    try {
+        data = await res.json();
+    } catch {}
+
+    if(!res.ok) {
+        throw new Error(data?.error || "Something went wrong.");
+    }
+
+    return data;
 }

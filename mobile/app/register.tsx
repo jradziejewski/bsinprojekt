@@ -6,14 +6,21 @@ import { apiFetch } from "../lib/api";
 export default function Register() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState<string | null>(null);
 
     const register = async () => {
-        await apiFetch("/auth/register", {
-            method: "POST",
-            body: JSON.stringify({ username, password }),
-        });
+        setError(null);
 
-        router.replace("/login");
+        try {
+            await apiFetch("/auth/register", {
+                method: "POST",
+                body: JSON.stringify({username, password}),
+            });
+
+            router.replace("/login");
+        } catch(err:any) {
+            setError(err.message);
+        }
     };
 
     return (
@@ -31,6 +38,12 @@ export default function Register() {
                 onChangeText={setPassword}
                 secureTextEntry
             />
+
+            {error && (
+                <Text style={{ color: "red", marginVertical: 10 }}>
+                    {error}
+                </Text>
+            )}
 
             <Button title="Register" onPress={register} />
         </View>

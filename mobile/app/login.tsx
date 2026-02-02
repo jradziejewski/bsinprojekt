@@ -7,18 +7,21 @@ import { router } from "expo-router";
 export default function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState<string | null>(null);
 
     const login = async () => {
-        const res = await apiFetch("/auth/login", {
-            method: "POST",
-            body: JSON.stringify({ username, password }),
-        });
+        setError(null);
 
-        const data = await res.json();
+        try {
+            const data = await apiFetch("/auth/login", {
+                method: "POST",
+                body: JSON.stringify({username, password}),
+            })
 
-        if (data.token) {
             await saveToken(data.token);
             router.replace("/me");
+        } catch(err: any) {
+            setError(err.message);
         }
     };
 
@@ -37,6 +40,12 @@ export default function Login() {
                 onChangeText={setPassword}
                 secureTextEntry
             />
+
+            { error && (
+                <Text style={{ color: "red", marginVertical: 10 }}>
+                    {error}
+                </Text>
+            )}
 
             <Button title="Login" onPress={login} />
             <Button title="Register" onPress={() => router.push("/register")} />
