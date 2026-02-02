@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import authRoutes from "./routes/auth.js";
 
 const app = express();
 
@@ -13,3 +14,5 @@ app.get("/health", (req, res) => {
 app.listen(3000, () => {
     console.log("API running on http://localhost:3000");
 });
+
+app.use("/auth", authRoutes);
