@@ -1,24 +1,37 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
+import { Stack, Redirect } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { useEffect, useState } from "react";
+import { getToken } from "@/lib/auth";
+import "react-native-reanimated";
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+    const [ready, setReady] = useState(false);
+    const [loggedIn, setLoggedIn] = useState(false);
 
-  return (
-    <ThemeProvider value={DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  );
+    useEffect(() => {
+        getToken().then(token => {
+            setLoggedIn(!!token);
+            setReady(true);
+        });
+    }, []);
+
+    if (!ready) return null;
+
+    return (
+        <ThemeProvider value={DefaultTheme}>
+            <Stack>
+                {/* Always define routes */}
+                <Stack.Screen name="login" options={{ title: "Login" }} />
+                <Stack.Screen name="register" options={{ title: "Register" }} />
+                <Stack.Screen name="me" options={{ title: "Profile" }} />
+            </Stack>
+
+            {/* Redirect based on auth */}
+            {!loggedIn ? <Redirect href="/login" /> : <Redirect href="/me" />}
+
+            <StatusBar style="auto" />
+        </ThemeProvider>
+    );
 }
+
