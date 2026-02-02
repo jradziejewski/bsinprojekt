@@ -49,6 +49,7 @@ export default function Login() {
 
             <Button title="Login" onPress={login} />
             <Button title="Register" onPress={() => router.push("/register")} />
+            <Button title="Products" onPress={() => router.push("/products")} />
         </View>
     );
 }

@@ -5,27 +5,16 @@ import auth from "../middleware/auth.js";
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-    const authHeader = req.headers.authorization;
-    let userId = null;
-
-    if(authHeader) {
-        try {
-            const token = authHeader.split(" ")[1];
-            const payload = JSON.parse(
-                Buffer.from(token.split(".")[1], "base64").toString()
-            );
-            userId = payload.userId;
-        } catch{}
-    }
-
     const products = await prisma.product.findMany({
-        where: {
-            OR: [
-                {userId: null},
-                ...(userId ? [{ userId }] : [])
-            ]
-        }
-    })
+        include: {
+            user: {
+                select: {
+                    id: true,
+                    username: true,
+                },
+            },
+        },
+    });
 
     res.json(products);
 });
@@ -52,19 +41,30 @@ router.put("/:id", auth, async (req, res) => {
     const id = Number(req.params.id);
     const { name, spec } = req.body;
 
-    const product = await prisma.product.findUnique({where: { id }});
+    if (!name || !spec) {
+        return res.status(400).json({ error: "Missing fields" });
+    }
 
-    if(!product || product.userId !== req.userId) {
+    const product = await prisma.product.findUnique({
+        where: { id },
+    });
+
+    if (!product) {
+        return res.status(404).json({ error: "Not found" });
+    }
+
+    if (product.userId !== req.userId) {
         return res.status(403).json({ error: "Forbidden" });
     }
 
     const updated = await prisma.product.update({
         where: { id },
-        data: { name, spec},
-    })
+        data: { name, spec },
+    });
 
     res.json(updated);
-})
+});
+
 
 router.delete("/:id", auth, async (req, res) => {
     const id = Number(req.params.id);
