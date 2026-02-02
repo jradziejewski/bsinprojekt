@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/auth.js";
+import productRoutes from "./routes/products.js";
 
 const app = express();
 
@@ -16,3 +17,4 @@ app.listen(3000, () => {
 });
 
 app.use("/auth", authRoutes);
+app.use("/products", productRoutes);
