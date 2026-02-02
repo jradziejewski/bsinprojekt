@@ -62,13 +62,15 @@ cd backend
 npm install
 ```
 
-3. Initialize database
+3. Initialize database and Prisma
 
 ```bash
 npx prisma migrate dev --name init
 ```
 
-This creates dev.db and applies migrations.
+```bash
+npx prisma generate
+```
 
 4. Start the backend server
 ```bash
@@ -142,3 +144,4 @@ POST   /products          # Authenticated
 PUT    /products/:id      # Owner only
 DELETE /products/:id      # Owner only
 ```
+
